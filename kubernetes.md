@@ -233,3 +233,105 @@ kube-node-lease   Active   174m
 kube-public       Active   174m
 kube-system       Active   174m
 ```
+
+
+
+`kubectl create deployment sample --image nginx --dry-run -o yaml`  
+`kubectl create job test --image nginx --dry-run -o yaml`  
+
+
+`kubectl create deployment test --image nginx`  
+
+`kubectl expose deployment/test --port 80 --dry-run -o yaml`  
+`kubectl delete deployment test`  
+
+
+### YAML
+pod.yml
+```yml
+apiVersion:v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.17.3
+    ports:
+    - containerPort: 80
+``` 
+
+jak nauczyc sie tworzyc yaml'a od zera ?
+Podzielmy go na 4 sekcje:
+apiVersion:
+kind:
+metadata: <!--- tylko nazwa
+spec: <!--- tutaj jest duzo mozliwosci
+
+
+`kubectl api-resources`    
+`kubectl api-versions`  
+
+`kubectl explain services --recursive`  
+`kubectl explain services.spec`  
+`kubectl explain services.spec.type`
+`kubectl explain deployment.spec.template.spec.volumes.nfs.server`  
+
+wersja webowa.
+https://kubernetes.io/docs/reference/#api-reference
+
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.3
+        ports:
+        - containerPort: 80
+```
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-nginx-service
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+  selector:
+    app: app-nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-nginx
+  template:
+    metadata:
+      labels:
+        app: app-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.3
+        ports:
+        - containerPort: 80
+```
