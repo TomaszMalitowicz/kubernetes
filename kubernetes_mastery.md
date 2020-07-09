@@ -287,7 +287,7 @@ cronjob.batch/sleep created
 
 
 in vesion 18+
-`kubectl create cronjob --schedule="*/3 * * * *" --restart=OnFailure --image=apache longsleep`  
+`kubectl create cronjob --schedule="*/3 * * * *" --restart=OnFailure --image=nginx longsleep`  
 cronjob.batch/longsleep created
 
 
@@ -306,3 +306,49 @@ longsleep-1594304280   0/1           9s         9s
 sleep-1594304100       0/1           3m         3m
 sleep-1594304280       0/1           9s         9s
 ```
+
+
+in vresion 17 and less
+`kubectl run pingpong --image=alpine ping 1.1.1.1`  
+```
+kubectl run --generator=deployment/apps.v1 is DEPRECATED and will be removed in a future version. Use kubectl run --generator=run-pod/v1 or kubectl create instead.
+deployment.apps/pingpong created
+```
+`kubectl scale deploy/pingpong --replicas 3`  
+```
+kubectl get deployments
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+pingpong   3/3     3            3           4m54s
+```
+```
+kubectl logs -l run=pingpong --tail 1 -f
+64 bytes from 1.1.1.1: seq=333 ttl=59 time=13.534 ms
+64 bytes from 1.1.1.1: seq=300 ttl=59 time=11.888 ms
+64 bytes from 1.1.1.1: seq=300 ttl=59 time=11.563 ms
+64 bytes from 1.1.1.1: seq=301 ttl=59 time=11.304 ms
+64 bytes from 1.1.1.1: seq=334 ttl=59 time=11.642 ms
+```
+
+`kubectl scale deploy/pingpong --replicas 8`  
+
+```
+kubectl logs -l run=pingpong --tail 1 -f
+error: you are attempting to follow 8 log streams, but maximum allowed concurrency is 5, use --max-log-requests to increase the limit
+```
+
+### Stern
+`sudo curl -L -o /usr/local/bin/stern https://github.com/wercker/stern/releases/download/1.11.0/stern_linux_amd64`  
+`
+`sudo chmod +x /usr/local/bin/stern`  
+`stern pingpong`  
+`stern --tail 1 --timestamps  pingpong`  
+
+
+
+kubectl get nodes
+kubectl version
+kubectl describe node/tomasz-virtualbox
+kubectl get pod --namespace=kube-system
+kubectl create deployment ticktock --image=bretfisher/clock
+kubectl scale deployment/ticktock --replicas 3
+kubectl logs deploy/ticktock --tail 1
