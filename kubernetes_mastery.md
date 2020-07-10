@@ -405,5 +405,71 @@ kubernetes     ClusterIP   10.152.183.1     <none>        443/TCP    21h
 littletomcat   ClusterIP   10.152.183.122   <none>        8080/TCP   89s
 ```
 curl http://10.152.183.122:8080   
+clean up  
+kubectl delete deployment.apps/littletomcat  
+kubectl delete service/littletomcat  
 
 
+### Sample Microservice: DockerCoins
+
+kubectl create deployment redis --image=redis  
+kubectl create deployment hasher --image=dockercoins/hasher:v0.1  
+kubectl create deployment rng --image=dockercoins/rng:v0.1  
+kubectl create deployment webui --image=dockercoins/webui:v0.1  
+kubectl create deployment worker --image=dockercoins/worker:v0.1  
+
+
+kubectl expose deployment redis --port 6379  
+kubectl expose deployment rng --port 80   
+kubectl expose deployment hasher --port 80  
+kubectl logs deploy/worker --follow   
+
+kubectl expose deploy/webui --type=NodePort --port=80  
+```
+kubectl get svc
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+hasher       ClusterIP   10.152.183.239   <none>        80/TCP         2m33s
+kubernetes   ClusterIP   10.152.183.1     <none>        443/TCP        22h
+redis        ClusterIP   10.152.183.236   <none>        6379/TCP       3m23s
+rng          ClusterIP   10.152.183.240   <none>        80/TCP         2m52s
+webui        NodePort    10.152.183.110   <none>        80:31549/TCP   20s
+```
+
+
+in web browser type:   
+localhost:31549  
+or   
+specify addres of the machine like:  
+http://192.168.100.9:31549  
+
+kubectl scale deploy/worker --replicas=2  
+kubectl scale deploy/worker --replicas=3  
+kubectl scale deploy/worker --replicas=10   
+kubectl scale deploy/worker --replicas=3  
+ok the performance dont go up anymore beyond 3 replicas  
+
+HASHER=$(kubectl get svc hasher -o go-template={{.spec.clusterIP}})  
+RNG=$(kubectl get svc rng -o go-template={{.spec.clusterIP}})  
+
+httping -c 3 $HASHER
+```
+PING 10.152.183.239:80 (/):
+connected to 10.152.183.239:80 (210 bytes), seq=0 time=  1.71 ms 
+connected to 10.152.183.239:80 (210 bytes), seq=1 time=  2.17 ms 
+connected to 10.152.183.239:80 (210 bytes), seq=2 time=  1.07 ms 
+--- http://10.152.183.239/ ping statistics ---
+3 connects, 3 ok, 0.00% failed, time 3007ms
+round-trip min/avg/max = 1.1/1.6/2.2 ms
+```
+```
+httping -c 3 $RNG
+PING 10.152.183.240:80 (/):
+connected to 10.152.183.240:80 (158 bytes), seq=0 time= 52.53 ms 
+connected to 10.152.183.240:80 (158 bytes), seq=1 time=135.04 ms 
+connected to 10.152.183.240:80 (158 bytes), seq=2 time= 71.20 ms 
+--- http://10.152.183.240/ ping statistics ---
+3 connects, 3 ok, 0.00% failed, time 3265ms
+round-trip min/avg/max = 52.5/86.3/135.0 ms
+```
+
+so we need to scal up the rng deployment  
