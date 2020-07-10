@@ -376,3 +376,34 @@ kubectl get pods -l app=httpenv -o wide
 
 kubectl delete deployment/httpenv service/httpenv
 ```
+
+### Networking
+
+
+assigment:  
+kubectl create deployment littletomcat --image=tomcat  
+kubectl get pod -o wide  
+or
+kubectl get pods --selector=app=littletomcat -o wide
+or
+kubectl get pod/littletomcat-7c89b45579-8t7zk -o wide  
+```
+NAME                            READY   STATUS    RESTARTS   AGE    IP            NODE                     NOMINATED NODE   READINESS GATES
+littletomcat-7c89b45579-8t7zk   1/1     Running   0          2m6s   10.1.50.179   ubuntuserver20microk8s   <none>           <none>
+```
+ping 10.1.50.179  
+kubectl delete pod/littletomcat-7c89b45579-8t7zk  
+or with:
+kubectl delete pods --selector=app=littletomcat  
+kubectl expose deployment littletomcat --port=8080  
+or with:  
+kubectl create service clusterip littletomcat --tcp 8080  
+```
+kubectl get services
+NAME           TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+kubernetes     ClusterIP   10.152.183.1     <none>        443/TCP    21h
+littletomcat   ClusterIP   10.152.183.122   <none>        8080/TCP   89s
+```
+curl http://10.152.183.122:8080   
+
+
