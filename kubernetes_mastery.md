@@ -344,11 +344,35 @@ error: you are attempting to follow 8 log streams, but maximum allowed concurren
 `stern --tail 1 --timestamps  pingpong`  
 
 
+```
+kubectl get nodes  
+kubectl version  
+kubectl describe node/tomasz-virtualbox  
+kubectl get pod --namespace=kube-system  
+kubectl create deployment ticktock --image=bretfisher/clock  
+kubectl scale deployment/ticktock --replicas 3  
+kubectl logs deploy/ticktock --tail 1  
+```
 
-kubectl get nodes
-kubectl version
-kubectl describe node/tomasz-virtualbox
-kubectl get pod --namespace=kube-system
-kubectl create deployment ticktock --image=bretfisher/clock
-kubectl scale deployment/ticktock --replicas 3
-kubectl logs deploy/ticktock --tail 1
+### Expose
+```
+kubectl create deployment httpenv --image=bretfisher/httpenv  
+kubectl scale deployment httpenv --replicas=10  
+kubect get pods  
+kubectl expose deployment httpenv --port 8888  
+```
+```
+IP=$(kubectl get svc httpenv -o go-template --template '{{ .spec.clusterIP }}')
+curl http://$IP:8888/
+curl -s http://$IP:8888/ | jq .HOSTNAME
+"httpenv-6bf64f7c4f-gwr8n"
+```
+
+### endpoints
+```
+kubectl describe service httpenv
+kubectl get endpoints httpenv -o yaml
+kubectl get pods -l app=httpenv -o wide
+
+kubectl delete deployment/httpenv service/httpenv
+```
