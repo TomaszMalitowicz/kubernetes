@@ -473,3 +473,18 @@ round-trip min/avg/max = 52.5/86.3/135.0 ms
 ```
 
 so we need to scal up the rng deployment  
+
+break-time-to-do-assigment
+wordsmith app
+
+kubectl create deployment wordsmith-web --image=bretfisher/wordsmith-web
+kubectl create deployment wordsmith-words --image=bretfisher/wordsmith-words
+kubectl create deployment wordsmith-db --image=bretfisher/wordsmith-db
+
+kubectl expose deploy/wordsmith-db --port 5432
+kubectl expose deploy/wordsmith-words --port 8080
+kubectl expose deploy/wordsmith-web --type=NodePort --port=80
+
+kubectl get svc
+
+kubectl scale deploy/wordsmith-words --replicas=5
