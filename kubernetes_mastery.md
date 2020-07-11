@@ -473,6 +473,7 @@ round-trip min/avg/max = 52.5/86.3/135.0 ms
 ```
 
 so we need to scal up the rng deployment  
+kubectl scale deploy/rng --replicas=3
 
 break-time-to-do-assigment
 wordsmith app
@@ -488,3 +489,18 @@ kubectl expose deploy/wordsmith-web --type=NodePort --port=80
 kubectl get svc
 
 kubectl scale deploy/wordsmith-words --replicas=5
+
+
+### YAML
+
+kubectl apply -f https://k8smastery.com/dockercoins.yaml
+
+
+### Kubernetes Dashboard
+
+kubectl apply -f https://k8smastery.com/insecure-dashboard.yaml
+```
+kubectl get service dashboard
+NAME        TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+dashboard   NodePort   10.152.183.89   <none>        80:30818/TCP   27s
+```
