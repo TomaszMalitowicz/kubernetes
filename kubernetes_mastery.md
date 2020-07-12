@@ -504,3 +504,23 @@ kubectl get service dashboard
 NAME        TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
 dashboard   NodePort   10.152.183.89   <none>        80:30818/TCP   27s
 ```
+
+
+### DaemonSets
+kubectl get deploy/rng -o yaml > rng.yml  
+change the kind from Deployment do DaemonSet save file  
+kubectl apply -f rng.yml  
+```
+error: error validating "rng.yml": error validating data: [ValidationError(DaemonSet.spec): unknown field "progressDeadlineSeconds" in io.k8s.api.apps.v1.DaemonSetSpec, ValidationError(DaemonSet.spec): unknown field "replicas" in io.k8s.api.apps.v1.DaemonSetSpec, ValidationError(DaemonSet.spec): unknown field "strategy" in io.k8s.api.apps.v1.DaemonSetSpec, ValidationError(DaemonSet.status): unknown field "availableReplicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status.conditions[0]): unknown field "lastUpdateTime" in io.k8s.api.apps.v1.DaemonSetCondition, ValidationError(DaemonSet.status.conditions[1]): unknown field "lastUpdateTime" in io.k8s.api.apps.v1.DaemonSetCondition, ValidationError(DaemonSet.status): unknown field "readyReplicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): unknown field "replicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): unknown field "updatedReplicas" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "currentNumberScheduled" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "numberMisscheduled" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "desiredNumberScheduled" in io.k8s.api.apps.v1.DaemonSetStatus, ValidationError(DaemonSet.status): missing required field "numberReady" in io.k8s.api.apps.v1.DaemonSetStatus]; if you choose to ignore these errors, turn validation off with --validate=false
+```
+to ignore these error you can use option:
+--validate=false
+```
+kubectl apply -f rng.yml --validate=false
+daemonset.apps/rng created
+```
+
+```
+kubectl get daemonset
+NAME   DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+rng    1         1         1       1            1           <none>          2m55s
