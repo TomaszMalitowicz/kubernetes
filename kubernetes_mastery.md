@@ -615,3 +615,12 @@ kubectl explain pod.spec --recursive
 use --dry=-run and --server-dry-run for testing  
 
 https://kubeyaml.com/
+
+kubectl create deployment web --image=nginx -o yaml > web.yaml  
+change kind from deployment od daemonSet  
+
+kubectl apply -f web.yaml --dry-run --validate=false -o yaml  
+
+kubectl apply -f web.yaml --server-dry-run --validate=false -o yaml
+
+kubectl diff -f web.yaml
