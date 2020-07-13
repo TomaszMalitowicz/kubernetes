@@ -524,3 +524,41 @@ daemonset.apps/rng created
 kubectl get daemonset
 NAME   DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
 rng    1         1         1       1            1           <none>          2m55s
+```
+
+### Labels and selectors
+```
+kubectl get pods -l app=rng
+NAME                   READY   STATUS    RESTARTS   AGE
+rng-6979b4858b-qwr7s   1/1     Running   3          2d8h
+rng-ljgx5              1/1     Running   0          29m
+```
+```
+kubectl label pods -l app=rng enabled=yes
+pod/rng-6979b4858b-qwr7s labeled
+pod/rng-ljgx5 labeled
+```
+kubectl edit service rng
+
+go under spec  
+selector  
+app  
+add:  
+`enabled: "yes"`  
+save: wq :)  
+
+service/rng edited  
+
+
+POD=$(kubectl get pod -l app=rng,pod-template-hash -o name)
+
+kubectl logs --tail 1 --follow $POD
+
+kubectl label pod -l app=rng,pod-template-hash enabled-
+pod/rng-6979b4858b-qwr7s labeled
+
+cleanup the mess ;)  
+kubectl delete -f https://k8smastery.com/dockercoins.yaml  
+
+kubectl delete daemonset/rng  
+
