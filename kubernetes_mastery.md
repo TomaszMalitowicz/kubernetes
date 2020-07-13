@@ -562,3 +562,38 @@ kubectl delete -f https://k8smastery.com/dockercoins.yaml
 
 kubectl delete daemonset/rng  
 
+
+#### assigment labels and selectors
+
+kubectl create deployment v1-nginx --image=nginx  
+kubectl expose deployment v1-nginx --type=NodePort --port=80   
+
+```
+kubectl get svc v1-nginx
+NAME       TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+v1-nginx   NodePort   10.152.183.108   <none>        80:32297/TCP   61s
+```
+curl 10.152.183.135  
+
+okey edit nginx service 
+kubectl edit service v1-nginx  
+
+Look for the `selector:` section, and change `app: v1-nginx` to `myapp: web`. Make sure to change the selector:
+
+edite the deployment of v1-nginx
+kubectl edit deployment v1-nginx
+
+look for `labels:` selecetor within the `template:` section
+add `myapp: web` bellow `app: v1-nginx`    
+save  
+
+add next deployment
+kubectl create deployment v2-apache --image=httpd  
+edit like before   
+kubect edit deployment v2-apache  
+`template:` -> `labels:`
+add  
+`myapp: web` bellow `app: v2-apache`
+
+check the: http://localhost:32297  
+okey clean up.
