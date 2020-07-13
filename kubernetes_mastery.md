@@ -597,3 +597,21 @@ add
 
 check the: http://localhost:32297  
 okey clean up.
+
+### YAML cdn
+kubectl create deployment web --image nginx -o yaml --dry-run  
+
+kubectl create namespace awesome-app -o yaml --dry-run  
+
+kubectl api-resources  
+
+kubectl api-versions  
+
+https://v1-17.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/  
+
+kubectl explain pod  
+kubectl explain pod.spec.volumes  
+kubectl explain pod.spec --recursive  
+use --dry=-run and --server-dry-run for testing  
+
+https://kubeyaml.com/
