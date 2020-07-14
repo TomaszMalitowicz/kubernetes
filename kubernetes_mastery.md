@@ -695,3 +695,35 @@ deployment.apps/worker rolled back
 kubectl rollout status deploy worker
 deployment "worker" successfully rolled out
 ```
+
+
+#### Rollout history and patching
+
+
+```
+kubectl rollout history deployment worker
+deployment.apps/worker 
+REVISION  CHANGE-CAUSE
+1         <none>
+3         <none>
+4         <none>
+```
+
+kubectl describe replicasets -l app=worker | grep -A3 Annotations  
+```
+Annotations:    deployment.kubernetes.io/desired-replicas: 10
+                deployment.kubernetes.io/max-replicas: 13
+                deployment.kubernetes.io/revision: 1
+Controlled By:  Deployment/worker
+--
+Annotations:    deployment.kubernetes.io/desired-replicas: 10
+                deployment.kubernetes.io/max-replicas: 13
+                deployment.kubernetes.io/revision: 3
+Controlled By:  Deployment/worker
+--
+Annotations:    deployment.kubernetes.io/desired-replicas: 10
+                deployment.kubernetes.io/max-replicas: 13
+                deployment.kubernetes.io/revision: 4
+                deployment.kubernetes.io/revision-history: 2
+```
+kubectl rollout undo deployment worker --to-revision=1  
