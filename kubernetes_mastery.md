@@ -624,3 +624,74 @@ kubectl apply -f web.yaml --dry-run --validate=false -o yaml
 kubectl apply -f web.yaml --server-dry-run --validate=false -o yaml
 
 kubectl diff -f web.yaml
+
+
+### Rolling Update and Failure Recovery
+
+kubectl apply -f https://k8smastery.com/dockercoins.yaml  
+
+kubectl get deploy -o json | jq ".items[] | {name:.metadata.name} + .spec.strategy.rollingUpdate"  
+```json
+{
+  "name": "dashboard",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "hasher",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "redis",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "rng",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "web",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "webui",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+{
+  "name": "worker",
+  "maxSurge": "25%",
+  "maxUnavailable": "25%"
+}
+```
+
+okey open 3 extra terminal prompt
+and use command to watch output when performing rolling update
+
+kubectl get pods -w  
+kubectl get deployments -w  
+kubectl get replicasets -w  
+
+kubectl set image deploy worker worker=dockercoins/worker:v0.2  
+
+
+okey now its time to broke things
+
+lets update our worker deployment with non-egsisting image np v0.3  
+kubectl set image deploy worker worker=dockercoins/worker:v0.3  
+and then check rolling status:  
+kubectl rollout status deploy worker  
+
+okey so lets rollout to working deployment  
+```  
+kubectl rollout undo deploy worker  
+deployment.apps/worker rolled back  
+```
+```
+kubectl rollout status deploy worker
+deployment "worker" successfully rolled out
+```
